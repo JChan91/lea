@@ -1,9 +1,20 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
-function Product({ other }) {
+function Product({ products }) {
   return (
     <div>
-      <img src={other.productImgURL} alt={other.productImg} />
+      {products ? (
+        products.map((pd) => {
+          return (
+            <Link key={pd.seller} to={`/main/${pd.seller}`}>
+              <img src={pd.productImgURL} alt="..." />
+            </Link>
+          );
+        })
+      ) : (
+        <p>No</p>
+      )}
     </div>
   );
 }

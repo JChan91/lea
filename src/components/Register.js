@@ -70,7 +70,7 @@ const Register = ({ handleSubmit }) => {
 
     alert("상품을 등록했습니다");
 
-    history.push({ pathname: "/" });
+    history.push({ pathname: "/main" });
   };
 
   return (
