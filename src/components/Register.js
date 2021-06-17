@@ -1,11 +1,32 @@
 import React, { useState } from "react";
+import { useHistory } from "react-router";
 import "../css/Register.scss";
 import { BsFillQuestionDiamondFill } from "react-icons/bs";
 
-// useState로 Form을 저장한다 <-- 동일한 것들 통합
-// Button 클릭 시 state를 App으로 끌어올린다
+// Button 클릭 시 state를 App으로 끌어올리고 Home으로 이동하기
 
-const Register = () => {
+const Register = ({ handleSubmit }) => {
+  const history = useHistory();
+
+  const locations = [
+    "서울",
+    "부산",
+    "대구",
+    "인천",
+    "광주",
+    "대전",
+    "울산",
+    "강원도",
+    "경기",
+    "경남",
+    "경북",
+    "전남",
+    "전북",
+    "제주",
+    "충남",
+    "충북",
+  ];
+
   const [form, setForm] = useState({
     productImg: "",
     productImgURL: "",
@@ -19,7 +40,9 @@ const Register = () => {
 
   // Spread Syntax
   const onPreImg = (e) => {
-    if (!e.target.files[0]) {
+    console.log(e.target.files);
+
+    if (e.target.files[0] === undefined) {
       <BsFillQuestionDiamondFill className="none-img" />;
     } else {
       setForm({ productImg: e.target.files[0] });
@@ -27,8 +50,7 @@ const Register = () => {
       let reader = new FileReader();
       let profile = e.target.files[0];
 
-      reader.onloadend = () => {
-        console.log(reader.result);
+      reader.onload = () => {
         setForm({ productImgURL: reader.result });
       };
 
@@ -39,17 +61,16 @@ const Register = () => {
   const onChange = (e) => {
     let inData = e.target.value;
 
-    if (e.target.name === "price") {
-      console.log(form.price);
-      inData = parseInt(inData).toLocaleString();
-    }
-
     setForm({ ...form, [e.target.name]: inData });
   };
 
   const onClick = (e) => {
-    console.log(form);
     e.preventDefault();
+    handleSubmit(form);
+
+    alert("상품을 등록했습니다");
+
+    history.push({ pathname: "/" });
   };
 
   return (
@@ -59,7 +80,11 @@ const Register = () => {
         {form.productImg === "" ? (
           <BsFillQuestionDiamondFill className="none-img" />
         ) : (
-          <img src={form.productImgURL} alt="..." />
+          <img
+            className="pre-img"
+            src={form.productImgURL}
+            alt={form.productImg}
+          />
         )}
       </div>
 
@@ -70,7 +95,6 @@ const Register = () => {
             type="file"
             accept="image/*"
             name="productImg"
-            value={form.img}
             className="form-control input-img"
             id="inputGroupFile02"
             onChange={onPreImg}
@@ -80,7 +104,7 @@ const Register = () => {
         {/* Seller */}
         <div className="mb-3">
           <label htmlFor="exampleInputPassword1" className="form-label">
-            판매자 이름
+            판매자 성함
           </label>
           <input
             type="text"
@@ -95,7 +119,7 @@ const Register = () => {
         {/* Product Name */}
         <div className="mb-3">
           <label htmlFor="exampleInputEmail1" className="form-label">
-            제품명
+            물품 이름
           </label>
           <input
             type="text"
@@ -118,7 +142,9 @@ const Register = () => {
             id="floatingTextarea"
             onChange={onChange}
           ></textarea>
-          <label htmlFor="floatingTextarea">상품 설명</label>
+          <label className="input-label" htmlFor="floatingTextarea">
+            물품 설명
+          </label>
         </div>
 
         {/* Price */}
@@ -126,6 +152,7 @@ const Register = () => {
           <input
             type="text"
             className="form-control price"
+            placeholder="시작 가격을 입력해주세요"
             name="price"
             value={form.price}
             onChange={onChange}
@@ -134,7 +161,7 @@ const Register = () => {
         </div>
 
         {/* Expired Date*/}
-        <div>
+        <div className="date-loc">
           <p>기간</p>
           <input
             type="datetime-local"
@@ -146,15 +173,20 @@ const Register = () => {
         </div>
 
         {/* Location */}
-        <div>
+        <div className="date-loc">
+          <p>거래 위치</p>
           <select
             className="form-select form-select-sm"
             aria-label=".form-select-sm example"
             onChange={onChange}
           >
-            <option>거래 장소</option>
-            <option value="seoul">서울</option>
-            <option value="busan">부산</option>
+            {locations.map((loc) => {
+              return (
+                <option key={loc} value={loc}>
+                  {loc}
+                </option>
+              );
+            })}
           </select>
         </div>
 
